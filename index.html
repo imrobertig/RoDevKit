@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0b0d12" />
+  <title>RoDevKit — Roblox Economy Lab</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark">R</div><div><strong>RoDevKit</strong><span>ROBLOX DEV TOOLS</span></div></div>
+      <div class="side-label">WORKSPACE</div>
+      <button class="nav-item active" data-view="economy"><span>◈</span> Economy Lab</button>
+      <button class="nav-item" data-view="progression"><span>⌁</span> Progression</button>
+      <button class="nav-item" data-view="guide"><span>⌘</span> Upgrade guide</button>
+      <div class="sidebar-bottom"><div class="status-dot"></div><div><b>Local workspace</b><small>Your data stays in this browser</small></div></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar"><div class="crumb">Workspace <span>/</span> <b id="crumb-title">Economy Lab</b></div><div class="top-actions"><span class="pill">OPEN SOURCE</span><button id="reset-btn" class="quiet-btn">Reset demo</button></div></header>
+      <section class="hero">
+        <div><div class="eyebrow"><span class="eyebrow-line"></span> ROBLOX GAME DESIGN TOOLKIT</div><h1>Make your economy<br/><em>make sense.</em></h1><p>Model upgrade costs, estimate progression, and spot balance problems before players do.</p></div>
+        <div class="hero-orbit"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="planet">R$</div><span class="orbit-label label-a">COST</span><span class="orbit-label label-b">GROWTH</span><span class="orbit-label label-c">PACING</span></div>
+      </section>
+
+      <section class="view active" id="view-economy">
+        <div class="section-heading"><div><span class="section-kicker">01 / CONFIGURE</span><h2>Economy simulator</h2></div><span class="subtle">Change the values to model your game</span></div>
+        <div class="workspace-grid">
+          <div class="panel controls-panel">
+            <div class="panel-title"><div class="title-icon">≋</div><div><h3>Economy settings</h3><p>Set your starting values</p></div></div>
+            <label>Starting cash <span class="input-wrap"><input id="cash" type="number" min="0" value="25" /><small>$</small></span></label>
+            <label>Cash earned per second <span class="input-wrap"><input id="income" type="number" min="0.1" step="0.5" value="3" /><small>$/s</small></span></label>
+            <label>First upgrade cost <span class="input-wrap"><input id="cost" type="number" min="1" value="100" /><small>$</small></span></label>
+            <label>Cost multiplier <span class="input-wrap"><input id="multiplier" type="number" min="1" max="10" step="0.05" value="1.35" /><small>×</small></span></label>
+            <label>Income multiplier per upgrade <span class="input-wrap"><input id="boost" type="number" min="1" max="10" step="0.05" value="1.25" /><small>×</small></span></label>
+            <label>Number of upgrades <span class="input-wrap"><input id="count" type="number" min="1" max="100" value="15" /><small>items</small></span></label>
+            <button class="primary-btn" id="simulate-btn">Run simulation <span>↗</span></button>
+            <p class="fine-print">This is a mathematical model, not a prediction of real player behavior.</p>
+          </div>
+          <div class="results-column">
+            <div class="metrics">
+              <div class="metric-card"><div class="metric-label">TIME TO MAX</div><div class="metric-value" id="total-time">—</div><div class="metric-note">Estimated active playtime</div></div>
+              <div class="metric-card"><div class="metric-label">TOTAL COST</div><div class="metric-value" id="total-cost">—</div><div class="metric-note">All upgrades combined</div></div>
+              <div class="metric-card"><div class="metric-label">FINAL INCOME</div><div class="metric-value" id="final-income">—</div><div class="metric-note">Per second at the end</div></div>
+            </div>
+            <div class="panel chart-panel"><div class="panel-title chart-title"><div><h3>Progression curve</h3><p>Estimated cumulative time per upgrade</p></div><span class="chart-legend"><i></i> Time to reach</span></div><div class="chart-wrap"><canvas id="chart" aria-label="Progression chart"></canvas></div><div class="chart-axis"><span>START</span><span>UPGRADE LEVEL</span><span>MAX</span></div></div>
+            <div class="panel table-panel"><div class="panel-title"><div><h3>Upgrade breakdown</h3><p>Cost and time required for each level</p></div><button class="export-btn" id="csv-btn">↓ Export CSV</button></div><div class="table-scroll"><table><thead><tr><th>LEVEL</th><th>UPGRADE COST</th><th>INCOME / SEC</th><th>TIME TO BUY</th><th>STATUS</th></tr></thead><tbody id="upgrade-rows"></tbody></table></div></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="view-progression">
+        <div class="section-heading"><div><span class="section-kicker">02 / UNDERSTAND</span><h2>Progression overview</h2></div><span class="subtle">A quick read on your current model</span></div>
+        <div class="panel overview-panel"><h3>What the model says</h3><p id="overview-text">Run a simulation to see your progression summary.</p><div class="overview-stats" id="overview-stats"></div></div>
+        <div class="panel"><div class="panel-title"><div><h3>Design checks</h3><p>Rule-of-thumb flags based on your inputs</p></div></div><div id="checks" class="checks-list"></div></div>
+      </section>
+
+      <section class="view" id="view-guide">
+        <div class="section-heading"><div><span class="section-kicker">03 / IMPROVE</span><h2>Upgrade design guide</h2></div><span class="subtle">Practical checks, not magic formulas</span></div>
+        <div class="guide-grid">
+          <article class="panel guide-card"><div class="guide-number">01</div><h3>Watch cost growth</h3><p>Exponential costs create a strong late-game wall. A small multiplier difference compounds quickly, so test the curve across the full upgrade path.</p><span class="tag">ECONOMY</span></article>
+          <article class="panel guide-card"><div class="guide-number">02</div><h3>Reward each purchase</h3><p>If an upgrade barely changes income, it can feel pointless. Compare the time saved by the new income against the cost of buying it.</p><span class="tag">FEEDBACK</span></article>
+          <article class="panel guide-card"><div class="guide-number">03</div><h3>Test the slowest stretch</h3><p>Average progression time can hide a miserable bottleneck. Look at the biggest jump between consecutive upgrade purchases.</p><span class="tag">PACING</span></article>
+          <article class="panel guide-card"><div class="guide-number">04</div><h3>Use real playtests</h3><p>This simulator models the numbers you provide. Actual retention depends on fun, clarity, social play, content, and many other factors.</p><span class="tag">VALIDATION</span></article>
+        </div>
+      </section>
+      <footer><span>RoDevKit <b>·</b> Built for Roblox developers</span><span>NO ACCOUNT REQUIRED · DATA STAYS LOCAL</span></footer>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
